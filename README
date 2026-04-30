@@ -1,0 +1,93 @@
+# Sales Analysis — Oliveira & Carbonari (2025)
+
+A real-world sales analysis project using data exported from an ERP system (RZBusiness). The goal was to identify the most strategically relevant products in the catalog — not just by revenue or volume, but by **demand breadth**: how many distinct customers purchase each product.
+
+---
+
+## Business Context
+
+The company produces handcrafted glass vases (Murano-style). The product catalog has three distinct segments:
+
+- **Regular products** — available to all customers
+- **Exclusive products** — custom-made for specific clients, not available to others (~150 SKUs). They were excluded from this analysis, even though these are the products that generated the most revenue, the design of the products is done by the customers themselves.
+- **Accessories (VARETA)** — glass rods sold to customers who use them as raw material to craft small glass items, and also used internally as production components. Excluded from this analysis as they serve a different commercial purpose than the finished product catalog.
+
+A simple top-10 by revenue or quantity would be misleading without separating these segments. This analysis filters them out and focuses on the regular catalog only.
+
+---
+
+## Data Sources
+
+| File | Source | Description |
+|---|---|---|
+| `Relatorio Curva ABC 2025.xls` | RZBusiness > Reports > ABC Curve | Product ranking by total revenue |
+| `Relatório de Fechamento de Vendas_XLSReport_2026_04_13_114601.xls` | RZBusiness > Reports > Sales Closing | Detailed sales by customer and product |
+
+> **Note:** Raw data files are not included in this repository to protect business confidentiality. The notebook contain the full transformation logic.
+
+---
+
+## Analysis
+
+### ABC Curve Analysis (2025_sales_analysis.ipynb)
+
+Classifies products by revenue contribution:
+- **Class A** (top 80% of revenue): 85 products
+- **Class B** (next 15%): 255 products  
+- **Class C** (remaining 5%): 455 products
+
+Key finding: nearly 50% of products were sold only once, which limits the usefulness of traditional ABC classification for this business. A product in class C may still be strategically relevant if it was purchased by multiple customers. 
+- Most customers are retailers whose end consumers choose pieces based on personal aesthetic preference. Since the product is artistic rather than utilitarian, a single purchase doesn't indicate low demand, it may simply reflect niche taste.
+
+### Multi-Metric Product Analysis
+
+Using the detailed sales report (Relatorio.xls), the analysis goes beyond ABC classification. For each product in the regular catalog, computes three metrics simultaneously:
+
+| Metric | What it measures |
+|---|---|
+| `clientes_distintos` | Number of unique customers who purchased the product |
+| `quantidade_total` | Total units sold |
+| `receita_total` | Total revenue generated |
+
+**Top products by demand breadth (distinct customers):**
+
+| Product | Distinct Customers | Units Sold | Revenue (R$) |
+|---|---|---|---|
+| NAPOLEAO COM OURO CHAMPAGNE P | 5 customers | 11 units | 1,430 |
+| TROUXINHA COM OURO AZUL OPALINO P | 5  customers| 6 units  | 1,027 |
+| TROUXINHA COM OURO CRISTAL P | 4  customers | 9 units | 1,170 |
+| COPO ZANFIRICO BRANCO P | 3  customers | 10 units | 1,440 |
+| TROUXINHA FF SEM OURO AMETISTA P | 3   customers| 11 units | 1,120 |
+
+---
+
+## Key Findings
+
+1. **Demand breadth is a better indicator than volume** — a product sold 20 times to a single customer is less strategically relevant than one sold 5 times to 5 different customers.
+
+2. **High-value low-volume products** — items like VASO SFERE PALLA SEM OURO AMBAR CLARO GG (R$1,900/unit) generate significant revenue with few transactions and should be prioritized in production planning.
+
+3. **Volume ≠ Revenue** — DESCANSO TALHER FOLHA DOURADO leads in units sold (36) but does not appear in the top revenue rankings, indicating a low unit price product. Useful for driving volume but not for maximizing revenue.
+---
+
+## Limitations
+
+- Data covers **2025 only** — a single year may not reflect long-term product trends
+- ~150 exclusive products were filtered manually by name. Future improvement: flag exclusive products directly in the ERP to automate filtering
+- The ABC curve data and the detailed sales data come from **different report formats**, requiring separate processing pipelines before merging
+
+---
+
+## Tech Stack
+
+- Python 3 / pandas
+- Google Colab
+
+---
+
+## Author
+
+**[Murilo Oliveira]**  
+Data Analyst at Oliveira & Carbonari Ltda (handcrafted Murano-style glass)  
+Currently completing a Data Science bootcamp (TripleTen, 2026)  
+[GitHub](https://github.com/Murilo-CostaOliveira)
